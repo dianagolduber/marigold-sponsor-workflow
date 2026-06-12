@@ -183,15 +183,18 @@
           <div class="detail-tab-panel" id="contactsPanel" role="tabpanel" aria-labelledby="contactsTab" data-detail-panel="contacts" hidden>
             <section class="contact-finder">
               <div>
-                <h3>Contact finder</h3>
-                <p id="contactFinderSummary">Find likely sponsor buyers and verified work emails.</p>
+                <div class="contact-title-row">
+                  <h3>Mock contact finder</h3>
+                  <span class="mock-badge">Demo data</span>
+                </div>
+                <p id="contactFinderSummary">Mock likely sponsor buyers and demo work emails. Connect Apollo, Hunter, or Clay for live enrichment.</p>
               </div>
-              <button class="ghost-button" id="findContactsBtn" type="button">Find verified emails</button>
+              <button class="ghost-button" id="findContactsBtn" type="button">Reveal mock emails</button>
             </section>
 
             <div class="contact-source">
-              <span id="contactProvider">Apollo + Hunter ready</span>
-              <span id="contactStatus">Not enriched yet</span>
+              <span id="contactProvider">Mock provider</span>
+              <span id="contactStatus">Demo only</span>
             </div>
 
             <div class="contact-list" id="contactList" aria-live="polite"></div>

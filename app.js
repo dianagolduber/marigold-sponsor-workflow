@@ -1126,23 +1126,24 @@ function renderContacts() {
   const sponsor = selectedSponsor();
   const contacts = contactsForSponsor(sponsor);
   const visibleContacts = state.contactsEnriched ? contacts : contacts.slice(0, 2);
-  const provider = state.contactsEnriched ? "Apollo + Hunter + Clay" : "Apollo + Hunter ready";
-  const status = state.contactsEnriched ? `${contacts.length} likely buyers enriched` : "Connect or run finder";
+  const provider = state.contactsEnriched ? "Mock Apollo + Hunter + Clay" : "Mock provider";
+  const status = state.contactsEnriched ? `${contacts.length} mock buyers revealed` : "Demo only";
 
   elements.contactFinderSummary.textContent = state.contactsEnriched
-    ? `Verified demo contacts for ${sponsor.name}. Production uses API enrichment and email verification.`
-    : `Find likely ${sponsor.name} buyers, work emails, and outreach routes.`;
+    ? `Mock contacts for ${sponsor.name}. Production would use API enrichment and email verification.`
+    : `Mock likely ${sponsor.name} buyers and demo work emails. Connect Apollo, Hunter, or Clay for live enrichment.`;
   elements.contactProvider.textContent = provider;
   elements.contactStatus.textContent = status;
-  elements.findContactsBtn.textContent = state.contactsEnriched ? "Refresh contacts" : "Find verified emails";
+  elements.findContactsBtn.textContent = state.contactsEnriched ? "Refresh mock contacts" : "Reveal mock emails";
 
   elements.contactList.innerHTML = visibleContacts.map((contact, index) => contactCard(contact, index)).join("");
 }
 
 function contactCard(contact, index) {
   const email = state.contactsEnriched ? contact.email : "email hidden until enriched";
-  const confidence = state.contactsEnriched ? `${contact.confidence}%` : "Ready";
-  const buttonLabel = state.contactsEnriched ? "Draft" : "Reveal";
+  const confidence = state.contactsEnriched ? `Mock ${contact.confidence}%` : "Mock";
+  const buttonLabel = state.contactsEnriched ? "Draft mock" : "Reveal mock";
+  const sourceLine = state.contactsEnriched ? `Mock source: ${contact.source}` : "Demo placeholder only";
 
   return `
     <article class="contact-card">
@@ -1150,6 +1151,7 @@ function contactCard(contact, index) {
         <strong>${contact.name}</strong>
         <span>${contact.title}</span>
         <small>${email}</small>
+        <span class="contact-source-line">${sourceLine}</span>
       </div>
       <div class="contact-actions">
         <span class="contact-confidence">${confidence}</span>
@@ -1292,7 +1294,7 @@ Recommended ask: ${sponsor.ask}
 Strategy: ${profile().angle} + ${goal().angle}
 Who to contact: ${sponsor.reach}
 
-Enriched contacts:
+Mock enriched contacts (demo only):
 ${contacts}
 
 Why this sponsor fits:
@@ -1310,7 +1312,7 @@ function renderModalDraft(contact = activeModalContact()) {
 
   elements.modalTitle.textContent = `${sponsor.name} sponsorship ask`;
   elements.modalSubtitle.textContent = contact
-    ? `${packageData[state.package].name} draft to ${contact.name}`
+    ? `${packageData[state.package].name} mock contact draft to ${contact.name}`
     : `${packageData[state.package].name} draft for ${eventInfo().name}`;
   elements.emailSubject.value = email.subject;
   elements.emailBody.value = email.body;
