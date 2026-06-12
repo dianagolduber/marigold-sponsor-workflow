@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Marigold | Sponsor Desk</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Marigold sponsor desk">
+      <header class="app-header">
+        <a class="brand" href="#top" aria-label="Marigold home">
+          <span class="brand-mark">M</span>
+          <span>
+            <strong>Marigold</strong>
+            <small>Find sponsors for the community you're growing.</small>
+          </span>
+        </a>
+        <div class="header-actions">
+          <button class="ghost-button" id="copyPlanBtn" type="button">Copy shortlist</button>
+          <button class="primary-button" id="draftTopBtn" type="button">Draft sponsor ask</button>
+        </div>
+      </header>
+
+      <section class="event-panel" id="top" aria-label="Event setup">
+        <div class="event-title">
+          <div>
+            <p class="eyebrow">Marigold workspace</p>
+            <h1>Event details</h1>
+          </div>
+          <strong id="targetAsk">$18,000 first ask</strong>
+        </div>
+
+        <div class="event-grid">
+          <label class="wide">
+            Event name
+            <input id="eventName" type="text" value="Women Build AI Hackathon" />
+          </label>
+          <label>
+            City
+            <input id="cityName" type="text" value="San Francisco" />
+          </label>
+          <label class="small">
+            Attendees
+            <input id="attendees" type="number" min="25" max="5000" value="180" />
+          </label>
+          <label class="wide">
+            Audience
+            <input id="audience" type="text" value="women founders, AI builders, and engineers" />
+          </label>
+          <label class="full">
+            Event context
+            <textarea
+              id="eventDescription"
+              class="event-context"
+              rows="3"
+              placeholder="Add the theme, sponsor angle, audience quality, speakers, prizes, or why this event matters."
+            >A hands-on build day for women founders and technical builders shipping AI prototypes, meeting mentors, and demoing finished projects.</textarea>
+          </label>
+        </div>
+
+        <div class="choice-grid">
+          <div class="choice-group">
+            <p class="control-label">Event type</p>
+            <div class="event-tabs" role="radiogroup" aria-label="Event type">
+              <button class="event-type active" type="button" data-event="hackathon" aria-pressed="true">Hackathon</button>
+              <button class="event-type" type="button" data-event="dinner" aria-pressed="false">Founder dinner</button>
+              <button class="event-type" type="button" data-event="workshop" aria-pressed="false">Workshop</button>
+              <button class="event-type" type="button" data-event="demo" aria-pressed="false">Demo night</button>
+            </div>
+          </div>
+
+          <div class="choice-group">
+            <p class="control-label">Event goal</p>
+            <div class="goal-tabs" role="radiogroup" aria-label="Event goal">
+              <button class="goal-type active" type="button" data-goal="product" aria-pressed="true">Ship product</button>
+              <button class="goal-type" type="button" data-goal="capital" aria-pressed="false">Meet investors</button>
+              <button class="goal-type" type="button" data-goal="growth" aria-pressed="false">Launch audience</button>
+              <button class="goal-type" type="button" data-goal="hiring" aria-pressed="false">Hire builders</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="strategy-strip" aria-label="Sponsor strategy">
+          <div class="strategy-block">
+            <span>Sponsor angle</span>
+            <strong id="strategyAngle">Builder adoption</strong>
+            <p id="strategyLine">Sell a branded build track with shipped projects and qualified follow-up.</p>
+          </div>
+          <div class="strategy-block">
+            <span>Best lanes</span>
+            <div class="lane-list" id="strategyLanes"></div>
+          </div>
+          <div class="strategy-block">
+            <span>Offer to sell</span>
+            <strong id="strategyOffer">Lead build partner</strong>
+            <p id="strategyProof">Projects shipped, demos completed, opt-in founder interest.</p>
+          </div>
+        </div>
+
+        <div class="luma-panel" aria-label="Luma market signals">
+          <div class="luma-head">
+            <div>
+              <p class="eyebrow">Luma signals</p>
+              <h2>Nearby sponsor patterns</h2>
+            </div>
+            <div class="luma-actions">
+              <span id="lumaStatus">Learning on</span>
+              <button class="ghost-button" id="syncLumaBtn" type="button">Sync Luma</button>
+              <button class="ghost-button" id="toggleLumaLearningBtn" type="button" aria-pressed="true">Learning on</button>
+            </div>
+          </div>
+
+          <div class="signal-summary">
+            <span><strong id="lumaEventCount">0</strong> comparable events</span>
+            <span><strong id="lumaSponsorCount">0</strong> sponsor clues</span>
+            <span id="lumaUpdated">Snapshot ready</span>
+          </div>
+
+          <div class="luma-signal-list" id="lumaSignalList" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <section class="list-panel" aria-label="Sponsor shortlist">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Sponsor matches</p>
+              <h2>Best-fit sponsors</h2>
+            </div>
+            <div class="heading-actions">
+              <span id="matchCount">9 fits</span>
+              <button class="ghost-button" id="refreshSponsorsBtn" type="button">Find more sponsors</button>
+            </div>
+          </div>
+
+          <div class="filter-row" aria-label="Sponsor filters">
+            <button class="filter active" type="button" data-filter="all">All</button>
+            <button class="filter" type="button" data-filter="builder">Builder tools</button>
+            <button class="filter" type="button" data-filter="ai">AI</button>
+            <button class="filter" type="button" data-filter="ops">Ops</button>
+            <button class="filter" type="button" data-filter="capital">Capital</button>
+            <button class="filter" type="button" data-filter="creative">Creative</button>
+          </div>
+
+          <div class="sponsor-list" id="sponsorBoard" aria-live="polite"></div>
+        </section>
+
+        <aside class="detail-panel" aria-label="Selected sponsor">
+          <div class="detail-head">
+            <div>
+              <p class="eyebrow">Why this brand fits</p>
+              <h2 id="detailName">Lovable</h2>
+              <p id="detailCategory">AI app builder</p>
+            </div>
+            <span id="detailScore">97%</span>
+          </div>
+
+          <div class="ask-card">
+            <span>Recommended ask</span>
+            <strong id="detailAsk">$12k-$20k</strong>
+          </div>
+
+          <div class="detail-tabs" role="tablist" aria-label="Sponsor detail sections">
+            <button class="detail-tab active" id="snapshotTab" type="button" role="tab" aria-selected="true" aria-controls="snapshotPanel" data-detail-tab="snapshot">Snapshot</button>
+            <button class="detail-tab" id="proofTab" type="button" role="tab" aria-selected="false" aria-controls="proofPanel" data-detail-tab="proof">Proof</button>
+            <button class="detail-tab" id="pathTab" type="button" role="tab" aria-selected="false" aria-controls="pathPanel" data-detail-tab="path">Path</button>
+          </div>
+
+          <div class="detail-tab-panel active" id="snapshotPanel" role="tabpanel" aria-labelledby="snapshotTab" data-detail-panel="snapshot">
+            <section class="detail-block">
+              <h3>Who to contact</h3>
+              <p id="detailReach"></p>
+            </section>
+
+            <section class="detail-block">
+              <h3>Why it fits</h3>
+              <p id="detailFit"></p>
+            </section>
+          </div>
+
+          <div class="detail-tab-panel" id="proofPanel" role="tabpanel" aria-labelledby="proofTab" data-detail-panel="proof" hidden>
+            <section class="detail-block">
+              <h3>Lead with</h3>
+              <ul id="detailSignals"></ul>
+            </section>
+
+            <section class="detail-block compact">
+              <h3>Proof pack</h3>
+              <ul class="check-list" id="detailProofPack"></ul>
+            </section>
+          </div>
+
+          <div class="detail-tab-panel" id="pathPanel" role="tabpanel" aria-labelledby="pathTab" data-detail-panel="path" hidden>
+            <section class="detail-block">
+              <h3>Context used</h3>
+              <p id="detailContext"></p>
+            </section>
+
+            <section class="detail-block">
+              <h3>Path note</h3>
+              <p id="detailPathNote"></p>
+            </section>
+          </div>
+
+          <div class="detail-actions">
+            <button class="primary-button" id="draftDetailBtn" type="button">Draft sponsor ask</button>
+            <button class="ghost-button" id="copyBriefBtn" type="button">Copy brief</button>
+            <a id="officialLink" href="https://lovable.dev/community" target="_blank" rel="noreferrer">Official path</a>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <div class="modal-backdrop" id="emailModal" role="presentation" hidden>
+      <section class="email-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="close-button" id="closeModalBtn" type="button" aria-label="Close email draft">X</button>
+        <div class="modal-head">
+          <div>
+            <p class="eyebrow">Sponsor ask</p>
+            <h2 id="modalTitle">Lovable sponsorship ask</h2>
+            <p id="modalSubtitle">Ready to edit, copy, and send.</p>
+          </div>
+        </div>
+
+        <div class="package-row" aria-label="Sponsorship package">
+          <button class="package" type="button" data-package="builder">$10k Builder</button>
+          <button class="package active" type="button" data-package="lead">$18k Lead</button>
+          <button class="package" type="button" data-package="annual">$60k Annual</button>
+        </div>
+
+        <label>
+          Subject
+          <input id="emailSubject" type="text" />
+        </label>
+        <label>
+          Message
+          <textarea id="emailBody" rows="15"></textarea>
+        </label>
+
+        <div class="modal-actions">
+          <button class="primary-button" id="copyEmailBtn" type="button">Copy email</button>
+          <button class="ghost-button" id="copyFollowUpBtn" type="button">Copy follow-up</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">Copied</div>
+    <script src="./app.js"></script>
+  </body>
+</html>
