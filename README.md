@@ -9,6 +9,7 @@ Marigold is a sponsorship workflow prototype for founders and community builders
 - Dynamic sponsor recommendations by event type and event goal
 - Sponsor ask ranges that adjust by audience size and event strategy
 - A sponsor detail panel with contact route, proof, and official path
+- Contact discovery with Apollo/Hunter/Clay-style enrichment, verified work-email status, and contact-personalized drafts
 - Email drafts for sponsor outreach
 - Luma-style market signals that show comparable sponsored event patterns and can influence future recommendations
 

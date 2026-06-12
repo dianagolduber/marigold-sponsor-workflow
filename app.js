@@ -8,6 +8,8 @@ const state = {
   selectedSponsorId: "lovable",
   lumaLearning: true,
   lumaSynced: false,
+  contactsEnriched: false,
+  modalContactIndex: null,
   modalOpen: false
 };
 
@@ -720,6 +722,44 @@ const packageData = {
   annual: { name: "Annual Partner", amount: "$60k", phrase: "$60k annual community partnership" }
 };
 
+const contactData = {
+  lovable: [
+    { name: "Maya Chen", title: "Community Partnerships Lead", email: "maya.chen@lovable.example", confidence: 92, source: "Apollo + Hunter" },
+    { name: "Nina Patel", title: "Founder Community Manager", email: "nina.patel@lovable.example", confidence: 86, source: "Clay enrichment" },
+    { name: "Elena Ruiz", title: "Growth Marketing", email: "elena.ruiz@lovable.example", confidence: 79, source: "Domain pattern" }
+  ],
+  vercel: [
+    { name: "Priya Shah", title: "Startup Partnerships", email: "priya.shah@vercel.example", confidence: 90, source: "Apollo + Hunter" },
+    { name: "Grace Liu", title: "Developer Relations", email: "grace.liu@vercel.example", confidence: 88, source: "Clay enrichment" },
+    { name: "Avery Kim", title: "AI Product Marketing", email: "avery.kim@vercel.example", confidence: 81, source: "Domain pattern" }
+  ],
+  n8n: [
+    { name: "Sofia Meyer", title: "Community Programs", email: "sofia.meyer@n8n.example", confidence: 91, source: "Apollo + Hunter" },
+    { name: "Leah Novak", title: "Developer Relations", email: "leah.novak@n8n.example", confidence: 86, source: "Clay enrichment" },
+    { name: "Mina Rossi", title: "Growth Marketing", email: "mina.rossi@n8n.example", confidence: 77, source: "Domain pattern" }
+  ],
+  gamma: [
+    { name: "Amara Singh", title: "Creator Partnerships", email: "amara.singh@gamma.example", confidence: 89, source: "Apollo + Hunter" },
+    { name: "Julia Park", title: "Growth Lead", email: "julia.park@gamma.example", confidence: 84, source: "Clay enrichment" },
+    { name: "Talia Stone", title: "Product Marketing", email: "talia.stone@gamma.example", confidence: 78, source: "Domain pattern" }
+  ],
+  mercury: [
+    { name: "Rachel Green", title: "Startup Partnerships", email: "rachel.green@mercury.example", confidence: 93, source: "Apollo + Hunter" },
+    { name: "Isha Rao", title: "Founder Community", email: "isha.rao@mercury.example", confidence: 87, source: "Clay enrichment" },
+    { name: "Maren Ellis", title: "Events Marketing", email: "maren.ellis@mercury.example", confidence: 80, source: "Domain pattern" }
+  ],
+  figma: [
+    { name: "Claire Wong", title: "Community Programs", email: "claire.wong@figma.example", confidence: 90, source: "Apollo + Hunter" },
+    { name: "Rhea Kapoor", title: "Startup Partnerships", email: "rhea.kapoor@figma.example", confidence: 85, source: "Clay enrichment" },
+    { name: "Maddie Cole", title: "Education and Events", email: "maddie.cole@figma.example", confidence: 79, source: "Domain pattern" }
+  ],
+  openai: [
+    { name: "Anika Bose", title: "Startup Programs", email: "anika.bose@openai.example", confidence: 84, source: "Apollo + Hunter" },
+    { name: "Mira Lane", title: "Developer Community", email: "mira.lane@openai.example", confidence: 78, source: "Clay enrichment" },
+    { name: "Eva Torres", title: "Events Partnerships", email: "eva.torres@openai.example", confidence: 72, source: "Domain pattern" }
+  ]
+};
+
 const money = new Intl.NumberFormat("en-US", {
   style: "currency",
   currency: "USD",
@@ -748,6 +788,11 @@ const elements = {
   lumaSignalList: document.querySelector("#lumaSignalList"),
   syncLumaBtn: document.querySelector("#syncLumaBtn"),
   toggleLumaLearningBtn: document.querySelector("#toggleLumaLearningBtn"),
+  contactFinderSummary: document.querySelector("#contactFinderSummary"),
+  contactProvider: document.querySelector("#contactProvider"),
+  contactStatus: document.querySelector("#contactStatus"),
+  contactList: document.querySelector("#contactList"),
+  findContactsBtn: document.querySelector("#findContactsBtn"),
   detailName: document.querySelector("#detailName"),
   detailCategory: document.querySelector("#detailCategory"),
   detailScore: document.querySelector("#detailScore"),
@@ -935,6 +980,38 @@ function proofPack() {
   ].filter((item, index, list) => list.indexOf(item) === index).slice(0, 5);
 }
 
+function demoDomainFor(sponsor) {
+  return `${sponsor.name.toLowerCase().replace(/[^a-z0-9]/g, "")}.example`;
+}
+
+function fallbackContacts(sponsor) {
+  const domain = demoDomainFor(sponsor);
+  const roles = sponsor.reach.split(",").slice(0, 3).map((role) => role.trim().replace(/\.$/, ""));
+  const names = ["Maya Chen", "Priya Shah", "Nina Patel"];
+
+  return roles.map((role, index) => {
+    const name = names[index];
+    const handle = name.toLowerCase().replace(" ", ".");
+
+    return {
+      name,
+      title: role || "Partnerships Lead",
+      email: `${handle}@${domain}`,
+      confidence: 84 - index * 5,
+      source: index === 0 ? "Apollo + Hunter" : "Clay enrichment"
+    };
+  });
+}
+
+function contactsForSponsor(sponsor = selectedSponsor()) {
+  return contactData[sponsor.id] || fallbackContacts(sponsor);
+}
+
+function activeModalContact() {
+  if (state.modalContactIndex === null) return null;
+  return contactsForSponsor()[state.modalContactIndex] || null;
+}
+
 function pageCountFor(list) {
   return Math.max(1, Math.ceil(list.length / PAGE_SIZE));
 }
@@ -1042,6 +1119,44 @@ function renderDetail() {
       return li;
     })
   );
+  renderContacts();
+}
+
+function renderContacts() {
+  const sponsor = selectedSponsor();
+  const contacts = contactsForSponsor(sponsor);
+  const visibleContacts = state.contactsEnriched ? contacts : contacts.slice(0, 2);
+  const provider = state.contactsEnriched ? "Apollo + Hunter + Clay" : "Apollo + Hunter ready";
+  const status = state.contactsEnriched ? `${contacts.length} likely buyers enriched` : "Connect or run finder";
+
+  elements.contactFinderSummary.textContent = state.contactsEnriched
+    ? `Verified demo contacts for ${sponsor.name}. Production uses API enrichment and email verification.`
+    : `Find likely ${sponsor.name} buyers, work emails, and outreach routes.`;
+  elements.contactProvider.textContent = provider;
+  elements.contactStatus.textContent = status;
+  elements.findContactsBtn.textContent = state.contactsEnriched ? "Refresh contacts" : "Find verified emails";
+
+  elements.contactList.innerHTML = visibleContacts.map((contact, index) => contactCard(contact, index)).join("");
+}
+
+function contactCard(contact, index) {
+  const email = state.contactsEnriched ? contact.email : "email hidden until enriched";
+  const confidence = state.contactsEnriched ? `${contact.confidence}%` : "Ready";
+  const buttonLabel = state.contactsEnriched ? "Draft" : "Reveal";
+
+  return `
+    <article class="contact-card">
+      <div class="contact-main">
+        <strong>${contact.name}</strong>
+        <span>${contact.title}</span>
+        <small>${email}</small>
+      </div>
+      <div class="contact-actions">
+        <span class="contact-confidence">${confidence}</span>
+        <button class="ghost-button" type="button" data-contact-draft="${index}">${buttonLabel}</button>
+      </div>
+    </article>
+  `;
 }
 
 function renderStrategy() {
@@ -1108,7 +1223,7 @@ function renderDetailTabs() {
   });
 }
 
-function makeEmail() {
+function makeEmail(contact = null) {
   const sponsor = selectedSponsor();
   const event = eventInfo();
   const pkg = packageData[state.package];
@@ -1121,11 +1236,14 @@ function makeEmail() {
     .map((item) => `- ${item.charAt(0).toLowerCase()}${item.slice(1)}`)
     .join("\n");
 
-  const body = `Hi [Name],
+  const greeting = contact ? contact.name.split(" ")[0] : "[Name]";
+  const contactLine = contact ? `\n\nI thought you might be the right person because your role touches ${contact.title.toLowerCase()}.` : "";
+
+  const body = `Hi ${greeting},
 
 I run ${event.name} in ${event.city}, bringing together ${event.attendees}+ ${event.audience}. The sponsor strategy for this ${profile().label} is ${profile().angle.toLowerCase()} with a focus on ${goal().angle.toLowerCase()}.${contextLine}
 
-I think ${sponsor.name} is a strong fit for this event because ${topSignal.charAt(0).toLowerCase()}${topSignal.slice(1)}. ${secondSignal}
+I think ${sponsor.name} is a strong fit for this event because ${topSignal.charAt(0).toLowerCase()}${topSignal.slice(1)}. ${secondSignal}${contactLine}
 
 I would like to invite ${sponsor.name} in as our ${pkg.name}. I would open the conversation around ${sponsor.ask} and package it as a ${profile().offer.toLowerCase()}.
 
@@ -1160,6 +1278,9 @@ I can send over a one-page sponsor brief with audience makeup, package options, 
 function sponsorBriefText() {
   const sponsor = selectedSponsor();
   const event = eventInfo();
+  const contacts = contactsForSponsor(sponsor)
+    .map((contact) => `${contact.name}, ${contact.title}, ${contact.email} (${contact.confidence}% via ${contact.source})`)
+    .join("\n");
 
   return `${sponsor.name} sponsor brief
 
@@ -1171,6 +1292,9 @@ Recommended ask: ${sponsor.ask}
 Strategy: ${profile().angle} + ${goal().angle}
 Who to contact: ${sponsor.reach}
 
+Enriched contacts:
+${contacts}
+
 Why this sponsor fits:
 - ${sponsor.signals.join("\n- ")}
 
@@ -1180,17 +1304,20 @@ Proof pack:
 Official path: ${sponsor.link}`;
 }
 
-function renderModalDraft() {
+function renderModalDraft(contact = activeModalContact()) {
   const sponsor = selectedSponsor();
-  const email = makeEmail();
+  const email = makeEmail(contact);
 
   elements.modalTitle.textContent = `${sponsor.name} sponsorship ask`;
-  elements.modalSubtitle.textContent = `${packageData[state.package].name} draft for ${eventInfo().name}`;
+  elements.modalSubtitle.textContent = contact
+    ? `${packageData[state.package].name} draft to ${contact.name}`
+    : `${packageData[state.package].name} draft for ${eventInfo().name}`;
   elements.emailSubject.value = email.subject;
   elements.emailBody.value = email.body;
 }
 
-function openEmailModal() {
+function openEmailModal(contactIndex = null) {
+  state.modalContactIndex = contactIndex;
   state.modalOpen = true;
   renderModalDraft();
   elements.modal.hidden = false;
@@ -1200,6 +1327,7 @@ function openEmailModal() {
 
 function closeEmailModal() {
   state.modalOpen = false;
+  state.modalContactIndex = null;
   elements.modal.hidden = true;
   document.body.style.overflow = "";
 }
@@ -1350,6 +1478,30 @@ elements.toggleLumaLearningBtn.addEventListener("click", () => {
   showToast(state.lumaLearning ? "Learning turned on" : "Learning paused");
 });
 
+elements.findContactsBtn.addEventListener("click", () => {
+  state.contactsEnriched = true;
+  state.detailTab = "contacts";
+  render();
+  showToast("Verified contacts found");
+});
+
+elements.contactList.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-contact-draft]");
+  if (!button) return;
+
+  if (!state.contactsEnriched) {
+    state.contactsEnriched = true;
+    render();
+    showToast("Emails revealed");
+    return;
+  }
+
+  const contact = contactsForSponsor()[Number(button.dataset.contactDraft)];
+  if (contact) {
+    openEmailModal(Number(button.dataset.contactDraft));
+  }
+});
+
 elements.sponsorBoard.addEventListener("click", (event) => {
   const draftButton = event.target.closest("[data-draft]");
   const selectButton = event.target.closest("[data-select]");
@@ -1367,8 +1519,8 @@ elements.sponsorBoard.addEventListener("click", (event) => {
   }
 });
 
-document.querySelector("#draftTopBtn").addEventListener("click", openEmailModal);
-document.querySelector("#draftDetailBtn").addEventListener("click", openEmailModal);
+document.querySelector("#draftTopBtn").addEventListener("click", () => openEmailModal());
+document.querySelector("#draftDetailBtn").addEventListener("click", () => openEmailModal());
 document.querySelector("#closeModalBtn").addEventListener("click", closeEmailModal);
 
 elements.modal.addEventListener("click", (event) => {

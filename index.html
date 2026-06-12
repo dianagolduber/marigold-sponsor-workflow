@@ -163,6 +163,7 @@
 
           <div class="detail-tabs" role="tablist" aria-label="Sponsor detail sections">
             <button class="detail-tab active" id="snapshotTab" type="button" role="tab" aria-selected="true" aria-controls="snapshotPanel" data-detail-tab="snapshot">Snapshot</button>
+            <button class="detail-tab" id="contactsTab" type="button" role="tab" aria-selected="false" aria-controls="contactsPanel" data-detail-tab="contacts">Contacts</button>
             <button class="detail-tab" id="proofTab" type="button" role="tab" aria-selected="false" aria-controls="proofPanel" data-detail-tab="proof">Proof</button>
             <button class="detail-tab" id="pathTab" type="button" role="tab" aria-selected="false" aria-controls="pathPanel" data-detail-tab="path">Path</button>
           </div>
@@ -177,6 +178,23 @@
               <h3>Why it fits</h3>
               <p id="detailFit"></p>
             </section>
+          </div>
+
+          <div class="detail-tab-panel" id="contactsPanel" role="tabpanel" aria-labelledby="contactsTab" data-detail-panel="contacts" hidden>
+            <section class="contact-finder">
+              <div>
+                <h3>Contact finder</h3>
+                <p id="contactFinderSummary">Find likely sponsor buyers and verified work emails.</p>
+              </div>
+              <button class="ghost-button" id="findContactsBtn" type="button">Find verified emails</button>
+            </section>
+
+            <div class="contact-source">
+              <span id="contactProvider">Apollo + Hunter ready</span>
+              <span id="contactStatus">Not enriched yet</span>
+            </div>
+
+            <div class="contact-list" id="contactList" aria-live="polite"></div>
           </div>
 
           <div class="detail-tab-panel" id="proofPanel" role="tabpanel" aria-labelledby="proofTab" data-detail-panel="proof" hidden>
